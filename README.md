@@ -1,61 +1,80 @@
-# J.A.R.V.I.S
+# Q.Y.R.A.N
 
-Бұл проект — қазақша/ағылшынша дыбыстық AI ассистенті. React frontend + FastAPI backend архитектурасы арқылы жұмыс істейді.
+🦅 **Q.Y.R.A.N** — жаңа буындағы қазақша цифрлық AI көмекші.
 
-## Мүмкіндіктер
-- Микрофоннан сөйлеуді қабылдау
-- Дыбысты мәтінге аудару (browser SpeechRecognition)
-- OpenAI жауаптарын алу
-- Жауапты дауыспен оқу (speech synthesis)
-- UI арқылы сұрақтар мен жауаптар
+> Мен Q.Y.R.A.N. Қазақтың рухын, алтын жүрегін, әділ ойлануын әлемге көрсетемін.
 
-## Q.Y.R.A.N жаңартуы
-Бұл репозиторий енді Q.Y.R.A.N branding стилімен жаңартылды:
-- premium dark интерфейс
-- алтын/сары түсті бренд елементтері
-- қазақша, жылы, әсерлі AI тон
-- Q.Y.R.A.N логотипі
+## 🌟 Төртінші қызмет
+- ✅ **Қазақша табиғи сөйлеу** — кәсіби, әсерлі, жылы
+- ✅ **Премиум интерфейс** — футуристік, темноте, алтын брендинг
+- ✅ **Дыбыстық режим** — микрофон + TTS
+- ✅ **Қызықты диалог** — сұрағыңызды нәтижеге дейін ұстап отыру
+- ✅ **Мәдениетті** — қазақ мәдениетін құрметтеген AI
 
-## Структура
-- `backend/` — FastAPI API
-- `frontend/` — React + Vite UI
+## 🚀 Тез басқа
 
-## Бастау
-
-1. Backend:
-   ```bash
-   cd backend
-   python -m venv .venv
-   source .venv/bin/activate   # Windows: .venv\Scripts\activate
-   pip install -r requirements.txt
-   cp .env.example .env
-   uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-   ```
-
-2. Frontend:
-   ```bash
-   cd frontend
-   npm install
-   npm run dev
-   ```
-
-3. `.env` ішіндегі `OPENAI_API_KEY` қойыңыз.
-
-## API
-- `GET /` — health check
-- `POST /ask` — `{ "text": "..." }` сұрау
-
-## Пример
+### Backend:
 ```bash
-curl -X POST http://localhost:8000/ask \
-  -H "Content-Type: application/json" \
+cd backend
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\\Scripts\\activate
+pip install -r requirements.txt
+cp .env.example .env
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+### Frontend:
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### Браузер:
+```
+http://localhost:5173
+```
+
+### OpenAI API Key
+`.env` ішіне:
+```env
+OPENAI_API_KEY=sk_...
+```
+
+## 🔌 API
+- `GET /` — health check
+- `POST /ask` — `{ "text": "..." }`
+
+## 📝 Мысал
+```bash
+curl -X POST http://localhost:8000/ask \\
+  -H "Content-Type: application/json" \\
   -d '{"text":"Сәлем, Q.Y.R.A.N!"}'
 ```
 
-## Команда
-```bash
-npm install
-npm run build
+## 🎯 Мәселе
+- Код жазу және debugging
+- Жоспарлау және архитектура
+- Мәтін және құжат өңдеу
+- Өйту және консультация
+- Өндік дауыс және табиғи AI
+
+## 📦 Технология
+- **Frontend:** React + Vite + TypeScript
+- **Backend:** FastAPI (Python)
+- **AI:** OpenAI GPT-4o-mini
+- **Voice:** Web Speech API
+- **Design:** Premium dark theme with gold accents
+
+## 👨‍💻 GitHub
+```
+git clone https://github.com/ssseddiar-art/jarvis-ai-assistant.git
+cd jarvis-ai-assistant
 ```
 
-GitHub репозиторийден ZIP ретінде жүктеу үшін: `Code` → `Download ZIP` батырмасын пайдаланыңыз.
+## ⚖️ License
+Open source — сіздің өндіктеріңіз үшін.
+
+---
+
+**Q.Y.R.A.N** — қазақ тілінің, қазақ мәдениетінің, қазақ ойлауының AI көлеңкесі.
