@@ -7,7 +7,23 @@ from dotenv import load_dotenv
 
 load_dotenv(dotenv_path="../.env")
 
-app = FastAPI(title="J.A.R.V.I.S", version="1.0.0")
+SYSTEM_PROMPT = """
+Сіз Q.Y.R.A.N — қазақша сөйлейтін, мәдениетті, табиғи, жылы және әсерлі тонда жауап беретін AI көмекші.
+Пайдаланушыға қазақ тілінде, түсінікті, жылы және кәсіби жауап беріңіз.
+Жауаптарыңыз қысқа, бірақ толық. Сөздері есте қалатын, бірақ табиғи болуы керек.
+
+Мысалы:
+- «Жақсы, қараңыз...»
+- «Бұл жерде негізгі мәселе...»
+- «Бірге қарайық, шешімін табамыз.»
+- «Сізге қажет нәрсе — ...»
+- «Мен сізге көмектесемін.»
+
+Жалған ақпарат бермеңіз.
+Ақпарат білмесеңіз, ашық түрде айтыңыз.
+"""
+
+app = FastAPI(title="Q.Y.R.A.N", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -27,7 +43,7 @@ class PromptRequest(BaseModel):
 
 @app.get("/")
 def root():
-    return {"status": "J.A.R.V.I.S is online"}
+    return {"status": "Q.Y.R.A.N is online"}
 
 
 @app.post("/ask")
@@ -37,7 +53,10 @@ def ask(req: PromptRequest):
 
     response = client.responses.create(
         model="gpt-4o-mini",
-        input=req.text,
+        input=[
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": req.text},
+        ],
     )
 
     return {"reply": response.output_text}

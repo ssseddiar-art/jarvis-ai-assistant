@@ -75,7 +75,7 @@ export default function App() {
     <div className="app-shell">
       <div className="panel">
         <div className="brand-row">
-          <div className="logo">J.A.R.V.I.S</div>
+          <div className="logo">Q.Y.R.A.N</div>
           <span className={`status ${isListening ? 'listening' : ''}`}>
             {isListening ? 'Тыңдап тұрмын...' : 'Қ ready'}
           </span>

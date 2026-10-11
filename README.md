@@ -2,18 +2,25 @@
 
 Бұл проект — қазақша/ағылшынша дыбыстық AI ассистенті. React frontend + FastAPI backend архитектурасы арқылы жұмыс істейді.
 
-Мүмкіндіктер:
+## Мүмкіндіктер
 - Микрофоннан сөйлеуді қабылдау
 - Дыбысты мәтінге аудару (browser SpeechRecognition)
 - OpenAI жауаптарын алу
 - Жауапты дауыспен оқу (speech synthesis)
 - UI арқылы сұрақтар мен жауаптар
 
-Структура:
+## Q.Y.R.A.N жаңартуы
+Бұл репозиторий енді Q.Y.R.A.N branding стилімен жаңартылды:
+- premium dark интерфейс
+- алтын/сары түсті бренд елементтері
+- қазақша, жылы, әсерлі AI тон
+- Q.Y.R.A.N логотипі
+
+## Структура
 - `backend/` — FastAPI API
 - `frontend/` — React + Vite UI
 
-Бастау:
+## Бастау
 
 1. Backend:
    ```bash
@@ -34,21 +41,21 @@
 
 3. `.env` ішіндегі `OPENAI_API_KEY` қойыңыз.
 
-API:
+## API
 - `GET /` — health check
 - `POST /ask` — `{ "text": "..." }` сұрау
 
-Пример:
+## Пример
 ```bash
 curl -X POST http://localhost:8000/ask \
   -H "Content-Type: application/json" \
-  -d '{"text":"Сәлем, J.A.R.V.I.S!"}'
+  -d '{"text":"Сәлем, Q.Y.R.A.N!"}'
 ```
 
-Команда:
+## Команда
 ```bash
 npm install
 npm run build
 ```
 
-GitHub репозиторийден ZIP ретінде жүктеу үшін "Code" -> "Download ZIP" батырмасын пайдаланыңыз.
+GitHub репозиторийден ZIP ретінде жүктеу үшін: `Code` → `Download ZIP` батырмасын пайдаланыңыз.
