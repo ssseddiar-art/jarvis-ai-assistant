@@ -1,295 +1,199 @@
-:root {
-  --bg-main: #050b14;
-  --bg-panel: #0b1625;
-  --gold-primary: #d4a574;
-  --gold-light: #f0d99f;
-  --text-main: #e8f0ff;
-  --text-muted: #a5b3c1;
-  --border-gold: rgba(212, 165, 116, 0.35);
-  --glow-gold: rgba(212, 165, 116, 0.15);
-}
+import { useState, useRef, useEffect } from 'react'
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+export default function App() {
+  const [messages, setMessages] = useState([
+    { role: 'assistant', content: 'Сәлем, бауырым. Мен Q.Y.R.A.N. Сізге қалай көмектесе аламын?' }
+  ])
+  const [text, setText] = useState('')
+  const [taskText, setTaskText] = useState('')
+  const [tasks, setTasks] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [isListening, setIsListening] = useState(false)
+  const messagesEndRef = useRef(null)
 
-html, body, #root {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #050b14 0%, #0a1620 50%, #050b14 100%);
-  color: var(--text-main);
-  font-family: 'Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', sans-serif;
-}
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
-body {
-  overflow: hidden;
-}
-
-.app-shell {
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-}
-
-.chat-panel {
-  width: min(800px, 100%);
-  height: 100%;
-  max-height: 90vh;
-  background: rgba(11, 22, 37, 0.85);
-  border: 1px solid var(--border-gold);
-  border-radius: 28px;
-  box-shadow: 
-    0 0 60px var(--glow-gold),
-    0 20px 80px rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(16px);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 24px;
-  border-bottom: 1px solid rgba(212, 165, 116, 0.12);
-  background: rgba(18, 30, 48, 0.6);
-}
-
-.logo-brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.logo-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--gold-primary), var(--gold-light));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 900;
-  color: #0a1620;
-  font-size: 1.3rem;
-  box-shadow: 0 0 20px rgba(212, 165, 116, 0.3);
-}
-
-.brand-name {
-  font-size: 1.3rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  background: linear-gradient(90deg, var(--gold-light), var(--gold-primary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.status {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  opacity: 0.8;
-  transition: all 0.3s ease;
-}
-
-.status.listening {
-  color: #7cffb3;
-  opacity: 1;
-  animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
-
-.messages-container {
-  flex: 1;
-  overflow-y: auto;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.messages-container::-webkit-scrollbar {
-  width: 6px;
-}
-
-.messages-container::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.messages-container::-webkit-scrollbar-thumb {
-  background: rgba(212, 165, 116, 0.25);
-  border-radius: 3px;
-}
-
-.message-row {
-  display: flex;
-  gap: 12px;
-  align-items: flex-end;
-}
-
-.message-row.user {
-  justify-content: flex-end;
-}
-
-.message-row.assistant {
-  justify-content: flex-start;
-}
-
-.message-bubble {
-  max-width: 75%;
-  padding: 14px 18px;
-  border-radius: 18px;
-  line-height: 1.6;
-  word-wrap: break-word;
-}
-
-.message-bubble.user {
-  background: linear-gradient(135deg, var(--gold-primary), var(--gold-light));
-  color: #0a1620;
-  font-weight: 600;
-  border-radius: 18px 4px 18px 18px;
-}
-
-.message-bubble.assistant {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(212, 165, 116, 0.12);
-  color: var(--text-main);
-  border-radius: 4px 18px 18px 18px;
-}
-
-.speak-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1.2rem;
-  opacity: 0.6;
-  transition: opacity 0.2s ease;
-}
-
-.speak-btn:hover {
-  opacity: 1;
-}
-
-.typing-indicator {
-  display: flex;
-  gap: 4px;
-}
-
-.typing-indicator span {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--gold-primary);
-  animation: bounce 1.4s infinite;
-}
-
-.typing-indicator span:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.typing-indicator span:nth-child(3) {
-  animation-delay: 0.4s;
-}
-
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(0);
-    opacity: 0.6;
-  }
-  50% {
-    transform: translateY(-10px);
-    opacity: 1;
-  }
-}
-
-.composer {
-  display: flex;
-  gap: 12px;
-  padding: 20px 24px;
-  border-top: 1px solid rgba(212, 165, 116, 0.12);
-  background: rgba(18, 30, 48, 0.6);
-}
-
-.input-field {
-  flex: 1;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(212, 165, 116, 0.18);
-  border-radius: 14px;
-  color: var(--text-main);
-  padding: 14px 18px;
-  font-size: 1rem;
-  outline: none;
-  transition: all 0.2s ease;
-}
-
-.input-field:focus {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(212, 165, 116, 0.4);
-  box-shadow: 0 0 12px rgba(212, 165, 116, 0.15);
-}
-
-.input-field::placeholder {
-  color: var(--text-muted);
-}
-
-.voice-btn, .send-btn {
-  background: rgba(212, 165, 116, 0.12);
-  border: 1px solid rgba(212, 165, 116, 0.25);
-  border-radius: 12px;
-  color: var(--text-main);
-  cursor: pointer;
-  font-size: 1.1rem;
-  padding: 12px 14px;
-  transition: all 0.2s ease;
-}
-
-.voice-btn:hover:not(:disabled), .send-btn:hover:not(:disabled) {
-  background: rgba(212, 165, 116, 0.25);
-  border-color: var(--gold-primary);
-}
-
-.send-btn {
-  background: linear-gradient(135deg, var(--gold-primary), var(--gold-light));
-  color: #0a1620;
-  font-weight: 700;
-  border: none;
-}
-
-.send-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-@media (max-width: 640px) {
-  .chat-panel {
-    border-radius: 20px;
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
 
-  .message-bubble {
-    max-width: 90%;
-    padding: 12px 16px;
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages])
+
+  useEffect(() => {
+    fetchTasks()
+  }, [])
+
+  const fetchTasks = async () => {
+    try {
+      const res = await fetch(`${API_URL}/tasks`)
+      const data = await res.json()
+      setTasks(data.tasks || [])
+    } catch {
+      setTasks([])
+    }
   }
 
-  .logo-brand {
-    gap: 8px;
+  const addTask = async () => {
+    if (!taskText.trim()) return
+
+    try {
+      const res = await fetch(`${API_URL}/tasks`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: taskText })
+      })
+
+      const data = await res.json()
+      setTasks(data.tasks || [])
+      setTaskText('')
+    } catch {
+      setTasks(prev => [...prev, taskText])
+      setTaskText('')
+    }
   }
 
-  .brand-name {
-    font-size: 1.1rem;
+  const askAI = async () => {
+    if (!text.trim()) return
+
+    const userMessage = { role: 'user', content: text }
+    const conversation = [...messages, userMessage]
+    setMessages(conversation)
+    setText('')
+    setLoading(true)
+
+    try {
+      const response = await fetch(`${API_URL}/ask`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text, history: conversation }),
+      })
+
+      const data = await response.json()
+      setMessages(prev => [...prev, { role: 'assistant', content: data.reply || 'Жауап жоқ.' }])
+    } catch (error) {
+      setMessages(prev => [...prev, { role: 'assistant', content: 'Backend қосылмады. FastAPI серверін іске қосыңыз.' }])
+    } finally {
+      setLoading(false)
+    }
   }
 
-  .logo-icon {
-    width: 40px;
-    height: 40px;
-    font-size: 1.1rem;
+  const startListening = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+
+    if (!SpeechRecognition) {
+      alert('Бұл браузер дыбыс тануды қолдамайды.')
+      return
+    }
+
+    const recognition = new SpeechRecognition()
+    recognition.lang = 'kk-KZ'
+    recognition.interimResults = false
+
+    recognition.onstart = () => { setIsListening(true) }
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript
+      setText(transcript)
+    }
+    recognition.onerror = () => setIsListening(false)
+    recognition.onend = () => setIsListening(false)
+
+    recognition.start()
   }
+
+  const speak = (message) => {
+    if (!message) return
+    const utterance = new SpeechSynthesisUtterance(message)
+    utterance.lang = 'kk-KZ'
+    window.speechSynthesis.cancel()
+    window.speechSynthesis.speak(utterance)
+  }
+
+  return (
+    <div className="app-shell">
+      <div className="chat-panel">
+        <div className="header">
+          <div className="logo-brand">
+            <div className="logo-icon">Q</div>
+            <div className="brand-name">Y.R.A.N</div>
+          </div>
+          <span className={`status ${isListening ? 'listening' : ''}`}>
+            {isListening ? '🎙️ Тыңдап тұрмын...' : '✓ online'}
+          </span>
+        </div>
+
+        <div className="messages-container">
+          {messages.map((msg, idx) => (
+            <div key={idx} className={`message-row ${msg.role}`}>
+              <div className={`message-bubble ${msg.role}`}>
+                {msg.content}
+              </div>
+              {msg.role === 'assistant' && (
+                <button className="speak-btn" onClick={() => speak(msg.content)} title="Дауыспен оқу">
+                  🔊
+                </button>
+              )}
+            </div>
+          ))}
+          {loading && (
+            <div className="message-row assistant">
+              <div className="message-bubble assistant">
+                <span className="typing-indicator">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </span>
+              </div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+
+        <div className="task-box">
+          <div className="task-row">
+            <input
+              type="text"
+              value={taskText}
+              onChange={(e) => setTaskText(e.target.value)}
+              placeholder="Жаңа тапсырма..."
+              className="task-input"
+            />
+            <button className="task-btn" onClick={addTask}>Қосу</button>
+          </div>
+
+          <div className="task-list">
+            {tasks.length === 0 ? (
+              <div className="task-empty">Тапсырмалар жоқ.</div>
+            ) : (
+              tasks.map((task, idx) => (
+                <div key={idx} className="task-item">• {task}</div>
+              ))
+            )}
+          </div>
+        </div>
+
+        <div className="composer">
+          <input
+            type="text"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="Сіздің сұрағыңыз..."
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !loading) askAI()
+            }}
+            className="input-field"
+          />
+          <button onClick={startListening} className="voice-btn" disabled={isListening} title="Микрофон">
+            {isListening ? '🎙️' : '🎤'}
+          </button>
+          <button onClick={askAI} disabled={loading || !text.trim()} className="send-btn">
+            {loading ? '⏳' : '→'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
 }

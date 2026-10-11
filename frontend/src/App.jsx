@@ -1,159 +1,132 @@
-import { useState, useRef, useEffect } from 'react'
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import List, Optional, Dict
+import os
+from openai import OpenAI
+from dotenv import load_dotenv
 
-export default function App() {
-  const [messages, setMessages] = useState([
-    { role: 'assistant', content: 'Сәлем, бауырым. Мен Q.Y.R.A.N. Сізге қалай көмектесе аламын?' }
-  ])
-  const [text, setText] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [isListening, setIsListening] = useState(false)
-  const messagesEndRef = useRef(null)
+load_dotenv(dotenv_path="../.env")
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
+SYSTEM_PROMPT = """
+Сіз Q.Y.R.A.N — жаңа буындағы қазақша цифрлық AI көмекші.
+Сіздің стильіңіз:
+- табиғи қазақша
+- жылы, әсерлі
+- мәдениетті
+- нақты, қысқа, түсінікті
+- практикалық, нәтижелі
 
-  useEffect(() => {
-    scrollToBottom()
-  }, [messages])
+Сіздің негізгі миссия:
+1. Пайдаланушының сұрағын толық түсіну.
+2. Енгізілген контекстті ескеру.
+3. Қажет болса, нақты қосымша сұрақ қою.
+4. Шешімді қысқа, бірақ толық, практикалық түрде беру.
+5. Білімсіздікті мойындап, жалған ақпарат бермеу.
+6. Қазақ тілінде, табиғи және жылы стильде сөйлесу.
+"""
 
-  const askAI = async () => {
-    if (!text.trim()) return
+app = FastAPI(title="Q.Y.R.A.N", version="1.0.0")
 
-    const userMessage = { role: 'user', content: text }
-    setMessages(prev => [...prev, userMessage])
-    setText('')
-    setLoading(true)
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "*")
+origins = ["*"] if allowed_origins == "*" else allowed_origins.split(",")
 
-    try {
-      const response = await fetch('http://localhost:8000/ask', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text: text }),
-      })
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-      const data = await response.json()
-      setMessages(prev => [...prev, { role: 'assistant', content: data.reply || 'Қате шықты.' }])
-    } catch (error) {
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Backend қосылмады. FastAPI серверін іске қосыңыз.' }])
-    } finally {
-      setLoading(false)
-    }
-  }
+api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=api_key) if api_key else None
 
-  const startListening = () => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+memory_store: Dict[str, List[str]] = {}
+task_store: List[str] = []
 
-    if (!SpeechRecognition) {
-      alert('Бұл браузер дыбыс тануды қолдамайды.')
-      return
-    }
 
-    const recognition = new SpeechRecognition()
-    recognition.lang = 'kk-KZ'
-    recognition.interimResults = false
+class PromptRequest(BaseModel):
+    text: str
+    history: Optional[List[dict]] = []
 
-    recognition.onstart = () => {
-      setIsListening(true)
-    }
 
-    recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript
-      setText(transcript)
-    }
+class TaskRequest(BaseModel):
+    title: str
 
-    recognition.onerror = (event) => {
-      console.error('Speech error:', event.error)
-      setIsListening(false)
-    }
 
-    recognition.onend = () => {
-      setIsListening(false)
-    }
+@app.get("/")
+def root():
+    return {"status": "Q.Y.R.A.N is online"}
 
-    recognition.start()
-  }
 
-  const speak = (message) => {
-    if (!message) return
-    const utterance = new SpeechSynthesisUtterance(message)
-    utterance.lang = 'kk-KZ'
-    window.speechSynthesis.cancel()
-    window.speechSynthesis.speak(utterance)
-  }
+@app.post("/ask")
+def ask(req: PromptRequest):
+    if not client:
+        return {"reply": "OPENAI_API_KEY жоқ. .env ішіндегі key-ті қосыңыз."}
 
-  return (
-    <div className="app-shell">
-      <div className="chat-panel">
-        <div className="header">
-          <div className="logo-brand">
-            <div className="logo-icon">Q</div>
-            <div className="brand-name">Y.R.A.N</div>
-          </div>
-          <span className={`status ${isListening ? 'listening' : ''}`}>
-            {isListening ? '🎙️ Тыңдап тұрмын...' : '✓ online'}
-          </span>
-        </div>
+    context_text = build_context(req.history or [])
+    user_input = req.text
+    full_prompt = user_input
+    if context_text:
+        full_prompt = f"Контекст:\n{context_text}\n\nПайдаланушы: {user_input}"
 
-        <div className="messages-container">
-          {messages.map((msg, idx) => (
-            <div key={idx} className={`message-row ${msg.role}`}>
-              <div className={`message-bubble ${msg.role}`}>
-                {msg.content}
-              </div>
-              {msg.role === 'assistant' && (
-                <button className="speak-btn" onClick={() => speak(msg.content)} title="Дауыспен оқу">
-                  🔊
-                </button>
-              )}
-            </div>
-          ))}
-          {loading && (
-            <div className="message-row assistant">
-              <div className="message-bubble assistant">
-                <span className="typing-indicator">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </span>
-              </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": full_prompt},
+            ],
+            temperature=0.7,
+            max_tokens=1000,
+        )
 
-        <div className="composer">
-          <input
-            type="text"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="Сіздің сұрағыңыз..."
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !loading) {
-                askAI()
-              }
-            }}
-            className="input-field"
-          />
-          <button 
-            onClick={startListening} 
-            className="voice-btn" 
-            disabled={isListening}
-            title="Микрофон"
-          >
-            {isListening ? '🎙️' : '🎤'}
-          </button>
-          <button 
-            onClick={askAI} 
-            disabled={loading || !text.trim()}
-            className="send-btn"
-          >
-            {loading ? '⏳' : '→'}
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
+        reply = response.choices[0].message.content
+        session_key = "default"
+        memory_store.setdefault(session_key, [])
+        memory_store[session_key].append(user_input)
+        memory_store[session_key].append(reply)
+        return {"reply": reply}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Қате шықты: {str(e)}")
+
+
+@app.get("/tasks")
+def get_tasks():
+    return {"tasks": task_store}
+
+
+@app.post("/tasks")
+def add_task(req: TaskRequest):
+    title = req.title.strip()
+    if not title:
+        raise HTTPException(status_code=400, detail="Тапсырма мәтіні бос болмауы керек.")
+    task_store.append(title)
+    return {"ok": True, "tasks": task_store}
+
+
+@app.delete("/tasks/{index}")
+def delete_task(index: int):
+    try:
+        task_store.pop(index)
+        return {"ok": True, "tasks": task_store}
+    except IndexError:
+        raise HTTPException(status_code=404, detail="Тапсырма табылмады")
+
+
+def build_context(history: List[dict]) -> str:
+    if not history:
+        return ""
+
+    lines: List[str] = []
+    for item in history[-10:]:
+        role = item.get("role")
+        content = item.get("content", "")
+        if not content:
+            continue
+        if role == "user":
+            lines.append(f"Пайдаланушы: {content}")
+        elif role == "assistant":
+            lines.append(f"Q.Y.R.A.N: {content}")
+    return "\n".join(lines)
