@@ -1,285 +1,204 @@
-:root {
-  --bg-main: #050b14;
-  --bg-panel: #0b1625;
-  --gold-primary: #d4a574;
-  --gold-light: #f0d99f;
-  --text-main: #e8f0ff;
-  --text-muted: #a5b3c1;
-  --border-gold: rgba(212, 165, 116, 0.35);
-  --glow-gold: rgba(212, 165, 116, 0.15);
-}
+# Q.Y.R.A.N
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+🦅 Q.Y.R.A.N — жаңа буындағы қазақша цифрлық AI көмекші.
 
-html, body, #root {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #050b14 0%, #0a1620 50%, #050b14 100%);
-  color: var(--text-main);
-  font-family: 'Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', sans-serif;
-}
+Бұл проект — қазақ тілінде табиғи, жылы, әсерлі және кәсіби сөйлейтін AI ассистентін жасауға арналған. Ол тек сұраққа жауап беріп қойған жоқ, пайдаланушының мақсатын түсініп, тапсырманы бірге қарастырады.
 
-body {
-  overflow: hidden;
-}
+Q.Y.R.A.N:
+- қазақша сөйлейді
+- табиғи, жылы, әсерлі стильде жауап береді
+- маңызды сұрақтарды нақтылайды
+- тапсырмалар тізімін ұстап тұрады
+- микрофон арқылы дауыспен сұрақ қоя алады
+- жауапты дауыспен оқи алады
+- ноутбукта да, смартфонда да жұмыс істейді
 
-.app-shell {
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-}
+---
 
-.chat-panel {
-  width: min(900px, 100%);
-  height: 100%;
-  max-height: 92vh;
-  background: rgba(11, 22, 37, 0.85);
-  border: 1px solid var(--border-gold);
-  border-radius: 28px;
-  box-shadow: 0 0 60px var(--glow-gold), 0 20px 80px rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(16px);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
+## 1. Негізгі идея
 
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px 24px;
-  border-bottom: 1px solid rgba(212, 165, 116, 0.12);
-  background: rgba(18, 30, 48, 0.6);
-}
+Q.Y.R.A.N — бұл тек чат-бот емес. Бұл:
+- цифрлық көмекші
+- қазақтың рухын, мәдениетін, тілін құрметтейтін AI
+- заманауи интерфейсті қолданатын практикалық ассистент
+- күнделікті тапсырмаларды жеңілдетуге арналған жүйе
 
-.logo-brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+---
 
-.logo-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--gold-primary), var(--gold-light));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 900;
-  color: #0a1620;
-  font-size: 1.3rem;
-  box-shadow: 0 0 20px rgba(212, 165, 116, 0.3);
-}
+## 2. Өндірістік стиль
 
-.brand-name {
-  font-size: 1.3rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  background: linear-gradient(90deg, var(--gold-light), var(--gold-primary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
+- қою түнгі фон
+- алтын және қызғылт сары түстер
+- premium dark UI
+- қазақша, мәдениетті тон
+- табиғи, әсерлі сөйлесу стилі
 
-.status {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  opacity: 0.8;
-  transition: all 0.3s ease;
-}
+---
 
-.status.listening {
-  color: #7cffb3;
-  opacity: 1;
-  animation: pulse 1.5s infinite;
-}
+## 3. Технологиялар
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
+- Frontend: React + Vite
+- Backend: FastAPI
+- AI: OpenAI GPT-4o-mini
+- Voice: Web Speech API
+- Styling: custom CSS
+- Mobile support: responsive design
 
-.messages-container {
-  flex: 1;
-  overflow-y: auto;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
+---
 
-.message-row {
-  display: flex;
-  gap: 12px;
-  align-items: flex-end;
-}
+## 4. Құрылым
 
-.message-row.user {
-  justify-content: flex-end;
-}
+```text
+jarvis-ai-assistant/
+├── backend/
+│   ├── app/
+│   │   └── main.py
+│   ├── .env.example
+│   └── requirements.txt
+├── frontend/
+│   ├── src/
+│   │   ├── App.jsx
+│   │   ├── main.jsx
+│   │   └── index.css
+│   ├── .env.example
+│   ├── index.html
+│   ├── package.json
+│   └── vite.config.js
+├── README.md
+├── .gitignore
+└── LICENSE
+```
 
-.message-row.assistant {
-  justify-content: flex-start;
-}
+---
 
-.message-bubble {
-  max-width: 75%;
-  padding: 14px 18px;
-  border-radius: 18px;
-  line-height: 1.6;
-  word-wrap: break-word;
-}
+## 5. Жұмысқа қосу
 
-.message-bubble.user {
-  background: linear-gradient(135deg, var(--gold-primary), var(--gold-light));
-  color: #0a1620;
-  font-weight: 600;
-  border-radius: 18px 4px 18px 18px;
-}
+### Backend
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+cp .env.example .env
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
 
-.message-bubble.assistant {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(212, 165, 116, 0.12);
-  color: var(--text-main);
-  border-radius: 4px 18px 18px 18px;
-}
+### Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-.speak-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1.2rem;
-  opacity: 0.6;
-}
+### Браузерде ашу
+```text
+http://localhost:5173
+```
 
-.task-box {
-  padding: 0 24px 12px;
-  border-top: 1px solid rgba(212, 165, 116, 0.12);
-  background: rgba(18, 30, 48, 0.4);
-}
+---
 
-.task-row {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-}
+## 6. .env конфигурациясы
 
-.task-input {
-  flex: 1;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(212, 165, 116, 0.18);
-  border-radius: 10px;
-  color: var(--text-main);
-  padding: 10px 12px;
-  outline: none;
-}
+### backend/.env
+```env
+OPENAI_API_KEY=your_openai_api_key_here
+ALLOWED_ORIGINS=*
+```
 
-.task-btn {
-  border: none;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--gold-primary), var(--gold-light));
-  color: #0a1620;
-  font-weight: 700;
-  padding: 10px 14px;
-  cursor: pointer;
-}
+### frontend/.env
+```env
+VITE_API_URL=http://localhost:8000
+```
 
-.task-list {
-  margin-top: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  color: var(--text-main);
-  font-size: 0.95rem;
-}
+---
 
-.task-item {
-  padding: 8px 10px;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(212, 165, 116, 0.1);
-  border-radius: 10px;
-}
+## 7. API
 
-.task-empty {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-}
+### Health check
+```bash
+GET /
+```
 
-.typing-indicator {
-  display: flex;
-  gap: 4px;
-}
+### Chat request
+```bash
+POST /ask
+```
 
-.typing-indicator span {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--gold-primary);
-  animation: bounce 1.4s infinite;
+Example:
+```json
+{
+  "text": "Сәлем, Q.Y.R.A.N!",
+  "history": []
 }
+```
 
-.typing-indicator span:nth-child(2) {
-  animation-delay: 0.2s;
-}
+---
 
-.typing-indicator span:nth-child(3) {
-  animation-delay: 0.4s;
-}
+## 8. Қазіргі мүмкіндіктер
 
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); opacity: 0.6; }
-  50% { transform: translateY(-10px); opacity: 1; }
-}
+- қазақша AI сөйлесу
+- премиум dark интерфейс
+- микрофон арқылы сұрақ қою
+- дауыспен оқу
+- сұрақ-жауап логикасы
+- тапсырмалар тізімі
+- әңгіме контексті
+- ноутбук және смартфон үшін адаптив дизайн
 
-.composer {
-  display: flex;
-  gap: 12px;
-  padding: 20px 24px;
-  border-top: 1px solid rgba(212, 165, 116, 0.12);
-  background: rgba(18, 30, 48, 0.6);
-}
+---
 
-.input-field {
-  flex: 1;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(212, 165, 116, 0.18);
-  border-radius: 14px;
-  color: var(--text-main);
-  padding: 14px 18px;
-  font-size: 1rem;
-  outline: none;
-}
+## 9. Дамытуға арналған мүмкіндіктер
 
-.voice-btn, .send-btn {
-  background: rgba(212, 165, 116, 0.12);
-  border: 1px solid rgba(212, 165, 116, 0.25);
-  border-radius: 12px;
-  color: var(--text-main);
-  cursor: pointer;
-  font-size: 1.1rem;
-  padding: 12px 14px;
-}
+Келешекте Q.Y.R.A.N-ға қосуға болатындар:
+- браузерді басқару
+- веб-іздеу
+- lokal файлдарды оқу
+- task planner
+- desktop automation
+- secure approvals
+- персонализация
+- enterprise knowledge base
 
-.send-btn {
-  background: linear-gradient(135deg, var(--gold-primary), var(--gold-light));
-  color: #0a1620;
-  font-weight: 700;
-  border: none;
-}
+---
 
-@media (max-width: 640px) {
-  .chat-panel {
-    border-radius: 20px;
-  }
+## 10. Смартфонға қосу
 
-  .message-bubble {
-    max-width: 90%;
-  }
-}
+Ноутбукта backend және frontend орындалғаннан кейін смартфонда Wi‑Fi желісі арқылы:
+
+```text
+http://YOUR_LAPTOP_IP:5173
+```
+
+Мысалы:
+```text
+http://192.168.1.60:5173
+```
+
+---
+
+## 11. Негізгі мақсат
+
+Q.Y.R.A.N — бұл тек AI емес, қазақтың цифрлық көмекшісі.
+
+Ол:
+- уақытты үнемдейді
+- тапсырманы жеңілдетеді
+- сұрақтарды түсінікті түрде жауап береді
+- мәдениетті және табиғи сөйлейді
+- қазақ тілін әлемдегі заманауи технологиялармен ұштастырады
+
+---
+
+## 12. Қорытынды
+
+Q.Y.R.A.N — бұл:
+- жаңа буындағы AI жобасы
+- қазақша сөйлейтін цифрлық ассистент
+- premium стильдегі интерфейс
+- практикалық әрі заманауи өнім
+
+Бұл жобаның басты идеясы — қазақ тілін, мәдениетін, логикасын және техника мүмкіндіктерін бірге ұштастыру.
+
+---
+
+Q.Y.R.A.N — қазақтың цифрлық рухы, AI-дің жаңа буыны.
